@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John Carlo Hipolito - 22080866</title>
     <style>
         table {
             text-align: center;
@@ -23,51 +27,95 @@
             Geneva, Verdana, sans-serif;
             align: center;
         }
+
+        input:valid {
+            background-color: white;
+        }
+
+        input:invalid {
+            background-color: lightcoral;
+        }
     </style>
 </head>
 <body>
 <div align="center">
     <h1>Booking your place for your dinner!</h1>
-
-
     <label for="name">Name:</label>
-    <input type="text" id="name" size="22">
-
+    <input type="text" id="name" onblur="validateName()" />
     <label for="phone">Phone Number</label>
-    <input type="number" id="phone" size="22"><br>
+    <input type="text" id="phone" onblur="validatePhone()" /><br>
 </div>
 <br>
 <div align="margin-left">
     <h2>Select a time</h2>
-    <input type="radio" id="first" name="firstSeating" value="5" checked>
+    <input type="radio" id="first" name="time" value="5:00" checked>
     <label for="first">5:00</label><br>
-    <input type="radio" id="second" name="secondSeating" value="6">
+    <input type="radio" id="second" name="time" value="6:00">
     <label for="second">6:00</label><br>
-    <input type="radio" id="third" name="thirdSeating" value="7">
+    <input type="radio" id="third" name="time" value="7:00">
     <label for="third">7:00</label><br>
-    <input type="radio" id="fourth" name="fourthSeating" value="8">
+    <input type="radio" id="fourth" name="time" value="8:00">
     <label for="fourth">8:00</label><br>
     <br>
     <h2>What would you like to have with us?</h2>
-    <input type="checkbox" id="starters" name="starters" value="starters">
+    <input type="checkbox" id="starters" name="food" value="Starters">
     <label for="starters">Starters</label><br>
-    <input type="checkbox" id="Main" name="Main" value="main">
+    <input type="checkbox" id="Main" name="food" value="Main Course">
     <label for="Main">Main Course</label><br>
-    <input type="checkbox" id="dessert" name="dessert" value="dessert">
-    <label for="dessert">dessert</label><br>
-    <input type="checkbox" id="drinks" name="drinks" value="drinks">
+    <input type="checkbox" id="dessert" name="food" value="Dessert">
+    <label for="dessert">Dessert</label><br>
+    <input type="checkbox" id="drinks" name="food" value="Drinks">
     <label for="drinks">Drinks</label><br>
 </div>
-<button onclick="submit()" id="submit">
+<button onclick="submit()" id="submit" disabled>
     Submit
-</button>
+</button><span style="padding-left: 20px" id="message"></span>
 
 <script>
+    const name = document.getElementById("name");
+    const phone = document.getElementById("phone");
+    const message = document.getElementById("message");
 
     function submit() {
-        window.alert("submit");
+        const time = document.querySelector("input[name='time']:checked").value;
+        const foods = Array.from(document.querySelectorAll("input[name='food']:checked")).map(f => f.value);
+        const properName = name.value.split(" ").map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(" ");
+        message.innerHTML = `Reservation for: ${properName} Phone: ${phone.value} at ${time} Starters are: ${foods.join(", ")}`;
     }
 
+    function validateName() {
+        if (name.value == "") {
+            name.setCustomValidity("Error: Name is empty.");
+        } else if (!name.value.match(/^[a-zA-Z]+(?:\s[a-zA-Z]+)+$/)) {
+            name.setCustomValidity("Error: First and last names are required.");
+        } else {
+            name.setCustomValidity("");
+        }
+        checkInputValidity();
+    }
+
+    function validatePhone() {
+        if (phone.value == "") {
+            phone.setCustomValidity("Error. Phone number is empty.");
+        } else if (phone.value.length != 6) {
+            phone.setCustomValidity("Error. Phone numbers must have exactly 6 characters.");
+        } else if (!phone.value.match(/^[0-9][0-9a-zA-Z]{5}$/)){
+            phone.setCustomValidity("Error: Phone number must start with number.");
+        } else {
+            phone.setCustomValidity("");
+        }
+        checkInputValidity();
+    }
+
+    function checkInputValidity() {
+        message.innerHTML =  name.validationMessage + " " + phone.validationMessage;
+
+        if(name.value != "" && name.validity.valid && phone.value !="" && phone.validity.valid){
+            document.getElementById("submit").disabled = false;
+        } else {
+            document.getElementById("submit").disabled = true;
+        }
+    }
 </script>
 </body>
 </html>
